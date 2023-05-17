@@ -11,9 +11,12 @@ trigger:
 pool:
   vmImage: 'windows-latest'
 
+options:
+  parallel: 1
+
 variables:
   buildConfiguration: 'Release'
-  proyecto: 'WebApiAutores/WebApiAutores.csproj'
+  proyecto: 'WebAPIAutores/WebAPIAutores.csproj'
 
 steps:
 - task: UseDotNet@2
@@ -45,7 +48,7 @@ steps:
     command: 'publish'
     publishWebProjects: false
     projects: $(proyecto)
-    arguments: '--configuration $(buildConfiguration) --output $(Build.ArtifactStagingDirectory) --runtime win-x64'
+    arguments: '--configuration $(buildConfiguration) --output $(Build.ArtifactStagingDirectory) --runtime win-x64 --self-contained'
     zipAfterPublish: false
     modifyOutputPath: false
 
