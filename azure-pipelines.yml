@@ -11,46 +11,50 @@ trigger:
 pool:
   vmImage: 'windows-latest'
 
-options:
-  parallel: 1
-
 variables:
   buildConfiguration: 'Release'
   proyecto: 'WebAPIAutores/WebAPIAutores.csproj'
 
-steps:
-- task: UseDotNet@2
-  displayName: 'Use .NET Core sdk 7.0.100'
-  inputs:
-    version: '7.0.100'
-    includePreviewVersions: true
+jobs:
+- job: Build
+  displayName: 'Build job'
+  steps:
+  - task: UseDotNet@2
+    displayName: 'Use .NET Core sdk 7.0.100'
+    inputs:
+      version: '7.0.100'
+      includePreviewVersions: true
 
-- script: dotnet build --configuration $(buildConfiguration)
-  displayName: 'dotnet build $(buildConfiguration)'
+  - script: dotnet build --configuration $(buildConfiguration)
+    displayName: 'dotnet build $(buildConfiguration)'
 
-- task: DotNetCoreCLI@2
-  displayName: 'Installing EF Core CLI'
-  inputs:
-    command: 'custom'
-    custom: 'tool'
-    arguments: 'install --global dotnet-ef'
+  - task: DotNetCoreCLI@2
+    displayName: 'Installing EF Core CLI'
+    inputs:
+      command: 'custom'
+      custom: 'tool'
+      arguments: 'install --global dotnet-ef'
 
-- task: DotNetCoreCLI@2
-  displayName: 'Generating DB script'
-  inputs:
-    command: 'custom'
-    custom: 'ef'
-    arguments: 'migrations script -i -o $(Build.ArtifactStagingDirectory)\migrate.sql --project $(proyecto)'
+  - task: DotNetCoreCLI@2
+    displayName: 'Generating DB script'
+    inputs:
+      command: 'custom'
+      custom: 'ef'
+      arguments: 'migrations script -i -o $(Build.ArtifactStagingDirectory)\migrate.sql --project $(proyecto)'
 
-- task: DotNetCoreCLI@2
-  displayName: 'Publishing App...'
-  inputs:
-    command: 'publish'
-    publishWebProjects: false
-    projects: $(proyecto)
-    arguments: '--configuration $(buildConfiguration) --output $(Build.ArtifactStagingDirectory) --runtime win-x64 --self-contained'
-    zipAfterPublish: false
-    modifyOutputPath: false
+- job: Publish
+  displayName: 'Publish job'
+  dependsOn: Build
+  steps:
+  - task: DotNetCoreCLI@2
+    displayName: 'Publishing App...'
+    inputs:
+      command: 'publish'
+      publishWebProjects: false
+      projects: $(proyecto)
+      arguments: '--configuration $(buildConfiguration) --output $(Build.ArtifactStagingDirectory) --runtime win-x64 --self-contained'
+      zipAfterPublish: false
+      modifyOutputPath: false
 
-- task: PublishBuildArtifacts@1
-  displayName: 'Publishing artifacts'
+  - task: PublishBuildArtifacts@1
+    displayName: 'Publishing artifacts'
