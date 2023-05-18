@@ -40,7 +40,7 @@ jobs:
     inputs:
       command: 'custom'
       custom: 'ef'
-      arguments: 'migrations script -i -o $(Build.ArtifactStagingDirectory)\migrate.sql --project $(proyecto)'
+      arguments: 'dotnet ef migrations script -i -o $(Build.ArtifactStagingDirectory)\migrate.sql --project $(proyecto)'
 
 - job: Publish
   displayName: 'Publish job'
