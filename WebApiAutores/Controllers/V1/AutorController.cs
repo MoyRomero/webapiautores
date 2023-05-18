@@ -13,7 +13,7 @@ namespace WebApiAutores.Controllers.V1
 {
     [ApiController]
     [Route("api/v1/autores")]
-    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Policy = "EsAdmin")]
+    //[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Policy = "EsAdmin")]
     public class AutoresController : ControllerBase
     {
         private readonly AplicationDbContext context;
