@@ -33,7 +33,7 @@ jobs:
     inputs:
       command: 'custom'
       custom: 'tool'
-      arguments: 'install --global dotnet-ef'
+      arguments: 'dotnet tool install --global dotnet-ef'
 
   - task: DotNetCoreCLI@2
     displayName: 'Generating DB script'
